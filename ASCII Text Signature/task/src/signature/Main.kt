@@ -29,8 +29,6 @@ fun main() {
         printLen = statusSize + 6
         isLonger = true
     }
-//    println("sum: $sum")
-//    println("printLen: $printLen")
     print("*".repeat(printLen) + "\n")
 
     if (!isLonger) {
@@ -43,7 +41,6 @@ fun main() {
         }
     } else {
         var letterLen = printLen - sum
-//        println(letterLen)
         if (letterLen % 2 != 0) {
             val v1 = ((letterLen / 2.0) - 0.5).toInt()
             val v2 = ((letterLen / 2.0) + 0.5).toInt()

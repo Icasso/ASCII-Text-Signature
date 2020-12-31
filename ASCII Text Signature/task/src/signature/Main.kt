@@ -5,6 +5,6 @@ fun main() {
     val name = scanner.nextLine()
     val size = name.length
     print("*".repeat(size + 4) + "\n")
-    println("* " + name + " *")
+    println("* $name *")
     print("*".repeat(size + 4) + "\n")
 }

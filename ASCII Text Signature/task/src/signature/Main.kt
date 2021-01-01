@@ -1,112 +1,71 @@
+
 package signature
 
+import java.io.File
 import java.util.*
 
-val scanner = Scanner(System.`in`)
 fun main() {
     print("Enter name and surname: ")
-    var name = scanner.nextLine()
+    val name = readLine()!!
     print("Enter person's status: ")
-    val status = scanner.nextLine()
-    val statusSize = status.length
-    name = name.toLowerCase()
-
-
-    name.toCharArray()
-    //Count
-    var sum = 5
-    for (char in name) {
-        sum += returnFont(char)[0].length
-        sum++
-    }
-
-    var isLonger = false
-    var printLen: Int
-    if (sum > statusSize + 6) {
-        printLen = sum
-        isLonger = false
-    } else {
-        printLen = statusSize + 6
-        isLonger = true
-    }
-    print("*".repeat(printLen) + "\n")
-
-    if (!isLonger) {
-        for (i in 0..2) {
-            print("*  ")
-            for (char in name) {
-                print(returnFont(char)[i] + " ")
-            }
-            println(" *")
-        }
-    } else {
-        var letterLen = printLen - sum
-        if (letterLen % 2 != 0) {
-            val v1 = ((letterLen / 2.0) - 0.5).toInt()
-            val v2 = ((letterLen / 2.0) + 0.5).toInt()
-            for (i in 0..2) {
-                print("*  " + " ".repeat(v1))
-                for (char in name) {
-                    print(returnFont(char)[i] + " ")
-                }
-                println(" ".repeat(v2) + " *")
-            }
-        } else {
-            val v1 = letterLen / 2
-            for (i in 0..2) {
-                print("*  " + " ".repeat(v1))
-                for (char in name) {
-                    print(returnFont(char)[i] + " ")
-                }
-                println(" ".repeat(v1) + " *")
-            }
-        }
-
-    }
-
-
-    val test = (printLen - 6 - statusSize) / 2.0
-    if (test * 2 % 2 != 0.0) {
-        val r1 = (test - 0.5).toInt()
-        val r2 = (test + 0.5).toInt()
-        println("*  " + " ".repeat(r1) + status + " ".repeat(r2) + "  *")
-    } else {
-        println("*  " + " ".repeat(test.toInt()) + status + " ".repeat(test.toInt()) + "  *")
-    }
-
-    print("*".repeat(printLen) + "\n")
-
+    val status = readLine()!!
+    printSignature(name, status)
 }
 
-fun returnFont(letter: Char): Array<String> {
-    when (letter) {
-        'a' -> (return arrayOf("____", "|__|", "|  |"))
-        'b' -> (return arrayOf("___ ", "|__]", "|__]"))
-        'c' -> (return arrayOf("____", "|   ", "|___"))
-        'd' -> (return arrayOf("___ ", "|  \\", "|__/"))
-        'e' -> (return arrayOf("____", "|___", "|___"))
-        'f' -> (return arrayOf("____", "|___", "|   "))
-        'g' -> (return arrayOf("____", "| __", "|__]"))
-        'h' -> (return arrayOf("_  _", "|__|", "|  |"))
-        'i' -> (return arrayOf("_", "|", "|"))
-        'j' -> (return arrayOf(" _", " |", "_|"))
-        'k' -> (return arrayOf("_  _", "|_/ ", "| \\_"))
-        'l' -> (return arrayOf("_   ", "|   ", "|___"))
-        'm' -> (return arrayOf("_  _", "|\\/|", "|  |"))
-        'n' -> (return arrayOf("_  _", "|\\ |", "| \\|"))
-        'o' -> (return arrayOf("____", "|  |", "|__|"))
-        'p' -> (return arrayOf("___ ", "|__]", "|   "))
-        'q' -> (return arrayOf("____", "|  |", "|_\\|"))
-        'r' -> (return arrayOf("____", "|__/", "|  \\"))
-        's' -> (return arrayOf("____", "[__ ", "___]"))
-        't' -> (return arrayOf("___", " | ", " | "))
-        'u' -> (return arrayOf("_  _", "|  |", "|__|"))
-        'v' -> (return arrayOf("_  _", "|  |", " \\/ "))
-        'w' -> (return arrayOf("_ _ _", "| | |", "|_|_|"))
-        'x' -> (return arrayOf("_  _", " \\/ ", "_/\\_"))
-        'y' -> (return arrayOf("_   _", " \\_/ ", "  |  "))
-        'z' -> (return arrayOf("___ ", "  / ", " /__"))
-        ' ' -> (return arrayOf("    ", "    ", "    "))
-        else -> return arrayOf("", "", "")
+fun printSignature(name: String, status: String) {
+    val roman =
+        Fonts(File("/Users/isaactsui/IdeaProjects/ASCII Text Signature/ASCII Text Signature/task/resources/roman.txt"))
+    val medium =
+        Fonts(File("/Users/isaactsui/IdeaProjects/ASCII Text Signature/ASCII Text Signature/task/resources/medium.txt"))
+
+    fun getLine(font: Fonts, str: String): Array<String?>? {
+        val size = font.letters['a']?.size
+        val line = size?.let { List(it) { mutableListOf<CharSequence>() } }
+        for (ch in str) {
+            if (ch == ' ') line!!.forEach { it -> font.space?.let { it1 -> it.add(it1) } } else
+                font.letters[ch].run { line!!.forEachIndexed { i, ln -> font.letters[ch]?.get(i)?.let { ln.add(it) } } }
+        }
+        val print = size?.let { Array(it) { i -> line?.get(i)?.joinToString("") } }
+        return print
+    }
+
+    val nameLn = getLine(roman, name)
+    val nameLen = nameLn?.get(0)?.length
+    val statusLn = getLine(medium, status)
+    val statusLen = statusLn?.get(0)?.length
+
+    val asteriskLine = {
+        println("8".repeat((nameLen?.let { statusLen?.let { it1 -> maxOf(it, it1) } }
+            ?.plus(Fonts.indent * 2)!!) + 4))
+    }
+
+    fun statusIndent(right: Boolean = false): String {
+        val ind = maxOf(nameLen!! - statusLen!! + Fonts.indent * 2, Fonts.indent * 2)
+        return " ".repeat(ind / 2 + if (right) ind % 2 else 0)
+    }
+
+    fun fontIndent(right: Boolean = false): String {
+        val ind = statusLen!! - nameLen!!
+        return " ".repeat(maxOf(Fonts.indent, ind / 2 + Fonts.indent + if (right) ind % 2 else 0))
+    }
+
+    asteriskLine()
+    nameLn!!.forEach { println("88${fontIndent()}$it${fontIndent(true)}88") }
+    statusLn!!.forEach { println("88${statusIndent()}$it${statusIndent(true)}88") }
+    asteriskLine()
+}
+
+class Fonts(file: File) {
+    val letters = with(Scanner(file)) {
+        val linesPer = nextInt()
+        val charsIn = nextInt()
+        List<Pair<Char, List<CharSequence>>>(charsIn) {
+            Pair(next().single().also { nextLine() }, List(linesPer) { nextLine() })
+        }.toMap()
+    }
+    val space: String? = letters['a']?.get(0)?.length.let { " ".repeat(it!!) }
+
+    companion object {
+        val indent = 2
     }
 }

@@ -1,7 +1,7 @@
 type: edu
 custom_name: stage4
 files:
-- name: src/signature/Main.kt
+  - name: src/signature/Main.kt
   visible: true
   text: |
     package signature
@@ -1060,6 +1060,15 @@ files:
     ++/++
     +/__+""".replace('+', ' ') // this works so, because someone (like stepik) possibly deletes trailing spaces in lines.
   learner_created: false
+  - name: resources/medium.txt
+    visible: true
+    learner_created: true
+  - name: resources/roman.txt
+    visible: true
+    learner_created: true
 feedback_link: https://hyperskill.org/projects/71/stages/393/implement#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Fri, 01 Jan 2021 11:54:40 UTC
 record: -1
